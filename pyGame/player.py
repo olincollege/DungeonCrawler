@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
                                 "Sprites/Yoshi/4.gif", "Sprites/Yoshi/5.gif", "Sprites/Yoshi/6.gif", 
                                 "Sprites/Yoshi/7.gif"]
         self.movement_check = False
+        self.direction_check = False
 
     def move(self, pressed_keys):
         # Arrow-key movement
@@ -25,9 +26,11 @@ class Player(pygame.sprite.Sprite):
         if pressed_keys[K_LEFT]:
             self.rect.move_ip(-1, 0)
             self.movement_check = True
+            self.direction_check = False
         if pressed_keys[K_RIGHT]:
             self.rect.move_ip(1, 0)
             self.movement_check = True
+            self.direction_check = True
 
         # WASD movement
         if pressed_keys[K_w]:
@@ -39,9 +42,11 @@ class Player(pygame.sprite.Sprite):
         if pressed_keys[K_a]:
             self.rect.move_ip(-1, 0)
             self.movement_check = True
+            self.direction_check = False
         if pressed_keys[K_d]:
             self.rect.move_ip(1, 0)
             self.movement_check = True
+            self.direction_check = True
 
         #Boundary
         if self.rect.left < 0:
@@ -57,11 +62,14 @@ class Player(pygame.sprite.Sprite):
     def animation(self):
         if self.movement_check == True:
             self.image_count = self.image_count + 1
-            self.surf = pygame.image.load(self.movement_sprites[self.image_count]).convert()
-            self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-
+            if self.direction_check == True:
+                self.surf = pygame.image.load(self.movement_sprites[self.image_count]).convert()
+                self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+            else:
+                initial = pygame.image.load(self.movement_sprites[self.image_count]).convert()
+                self.surf = pygame.transform.flip(initial, True, False)
+                self.surf.set_colorkey((255, 255, 255), RLEACCEL)
             # Reset image counter
             if self.image_count > 5:
                 self.image_count = 1
         self.movement_check = False
-        
