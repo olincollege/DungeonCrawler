@@ -1,5 +1,6 @@
 from game_setup import *
 from player import Player
+from enemy import Enemy
 
 # Initlise pyGame w/ Display
 pygame.init()
@@ -10,6 +11,10 @@ doors = pygame.sprite.Group()
 
 # Create player
 player = Player()
+
+# Enemy creation
+enemy = Enemy()
+counter = 0
 
 running = True
 while running:
@@ -23,6 +28,12 @@ while running:
     player.move(pressed_keys)
     player.animation()
 
+    # Enemy Movement
+    if counter%10 == 0:
+        player_pos = (player.rect.x, player.rect.y)
+        enemy.move(player_pos)
+        enemy.animation()
+    counter += 1
 
     # Screen fill
     screen.fill(BACKGROUND_COLOR)
@@ -33,10 +44,12 @@ while running:
     right_door = pygame.draw.line(screen, pygame.Color('red'), [799, 250], [799,350], width=15)
     bottom_door = pygame.draw.line(screen, pygame.Color('red'), [350, 599], [450,599], width=15)
 
-    doors.add(left_door)
+    # doors.add(left_door)
 
     # Check Collision
-    player.check_collision(doors)
+    # player.check_collision(doors)
 
     screen.blit(player.surf, player.rect)
+    screen.blit(enemy.surf, enemy.rect)
     pygame.display.flip()
+
