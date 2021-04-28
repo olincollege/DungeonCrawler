@@ -18,4 +18,6 @@ from pygame.locals import (
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-BACKGROUND_COLOR = pygame.Color('white')
+
+background_raw = pygame.image.load("Sprites/Background/cloud_background.jpg")
+BACKGROUND = pygame.transform.smoothscale(background_raw, (800, 600)) 

@@ -1,6 +1,7 @@
 from game_setup import *
 from player import Player
 from enemy import Enemy
+from board import Board
 
 # Initlise pyGame w/ Display
 pygame.init()
@@ -16,8 +17,28 @@ player = Player()
 enemy = Enemy()
 counter = 0
 
+# Door creation
+door = Board(200, 560)
+door1 = Board(400, 560)
+door2 = Board(600, 560)
+doors.add(door)
+doors.add(door1)
+doors.add(door2)
+
+# Fade
+def fade(): 
+    fade = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+    fade.fill((0,0,0))
+    for alpha in range(0, 300):
+        pygame.time.delay(8)
+        fade.set_alpha(alpha)
+        screen.blit(fade, (0,0))
+        pygame.display.update()
+        pygame.time.delay(5)
+
 running = True
 while running:
+
     for event in pygame.event.get():
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE or event.type == QUIT:
@@ -36,20 +57,20 @@ while running:
     counter += 1
 
     # Screen fill
-    screen.fill(BACKGROUND_COLOR)
+    screen.blit(BACKGROUND, (0,0))
 
     # Creates border
-    border = pygame.draw.rect(screen, pygame.Color('black'), pygame.Rect(1, 1, 799, 599), width=10)
-    left_door = pygame.draw.line(screen, pygame.Color('red'), [0, 250], [0,350], width=15)
-    right_door = pygame.draw.line(screen, pygame.Color('red'), [799, 250], [799,350], width=15)
-    bottom_door = pygame.draw.line(screen, pygame.Color('red'), [350, 599], [450,599], width=15)
-
-    # doors.add(left_door)
+    border = pygame.draw.rect(screen, pygame.Color('black'), pygame.Rect(1, 1, 799, 599), width=20)
 
     # Check Collision
-    # player.check_collision(doors)
+    if player.check_collision(doors):
+        fade()
 
     screen.blit(player.surf, player.rect)
     screen.blit(enemy.surf, enemy.rect)
+    screen.blit(door.surf, door.rect)
+    screen.blit(door1.surf, door1.rect)
+    screen.blit(door2.surf, door2.rect)
     pygame.display.flip()
+
 

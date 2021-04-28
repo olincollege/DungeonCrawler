@@ -79,4 +79,6 @@ class Player(pygame.sprite.Sprite):
     
     def check_collision(self, sprite):
         if pygame.sprite.spritecollide(self, sprite, True):
-            print("hehe")
+            print("Pls work plssss")
+            return True
+        return False
