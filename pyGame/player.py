@@ -5,7 +5,8 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.image.load("Sprites/Yoshi/1.gif").convert()
+        look_initial = pygame.image.load("Sprites/Yoshi/1.gif").convert()
+        self.surf = pygame.transform.smoothscale(look_initial, (40, 40)) 
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
         self.image_count = 0
@@ -63,13 +64,19 @@ class Player(pygame.sprite.Sprite):
         if self.movement_check == True:
             self.image_count = self.image_count + 1
             if self.direction_check == True:
-                self.surf = pygame.image.load(self.movement_sprites[self.image_count]).convert()
+                look_initial = pygame.image.load(self.movement_sprites[self.image_count]).convert()
+                self.surf = pygame.transform.smoothscale(look_initial, (40, 40)) 
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
             else:
-                initial = pygame.image.load(self.movement_sprites[self.image_count]).convert()
-                self.surf = pygame.transform.flip(initial, True, False)
+                flip = pygame.image.load(self.movement_sprites[self.image_count]).convert()
+                look_initial = pygame.transform.smoothscale(flip, (40, 40)) 
+                self.surf = pygame.transform.flip(look_initial, True, False)
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
             # Reset image counter
             if self.image_count > 5:
                 self.image_count = 1
         self.movement_check = False
+    
+    def check_collision(self, sprite):
+        if pygame.sprite.spritecollide(self, sprite, True):
+            print("hehe")
