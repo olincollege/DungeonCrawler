@@ -1,6 +1,6 @@
 from game_setup import *
-from player import Player
-from enemy import Enemy
+from player import Player, HealthBar
+from enemy import Enemy, EnemyProjectile
 from board import Board
 from door import Door
 from generate_world import WorldGeneration, Room
@@ -8,7 +8,7 @@ from generate_world import WorldGeneration, Room
 class Game():
 
     def __init__(self, pygame):
-# Initlise pyGame w/ Display
+        # Initlise pyGame w/ Display
         self.pygame = pygame
         self.pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -28,13 +28,19 @@ class Game():
         self.background_raw = self.pygame.image.load("Sprites/Background/cloud_background.jpg")
         self.BACKGROUND = self.pygame.transform.smoothscale(self.background_raw, (800, 600)) 
 
-
         # Create self.player
         self.player = Player()
 
         # Enemy creation
         self.enemy = Enemy()
         self.counter = 0
+
+        # Enemy projectile creation
+        self.ADDENEMY = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.ADDENEMY, 1000)
+
+        # Health Bar
+        self.health = HealthBar()
 
         # Door creation
         self.door1 = Door(200, 560)
@@ -99,14 +105,21 @@ class Game():
 
     def run_game(self):
 
+        self.enemies = pygame.sprite.Group()
+
         counter = 0
         running = True
         while running:
 
+            # Exit statement
             for event in self.pygame.event.get():
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE or event.type == QUIT:
                         running = False
+                # Enemy Projectile
+                if event.type == self.ADDENEMY:
+                    self.enemy_pro = EnemyProjectile()
+                    self.enemies.add(self.enemy_pro)
 
             # Movement
             pressed_keys = self.pygame.key.get_pressed()
@@ -120,11 +133,13 @@ class Game():
                 self.enemy.animation()
             counter += 1
 
+            self.enemies.update()
+
             # Screen fill
             self.screen.blit(self.BACKGROUND, (0,0))
 
             # Creates border
-            border = self.pygame.draw.rect(self.screen, self.pygame.Color('black'), self.pygame.Rect(1, 1, 799, 599), width=20)
+            self.pygame.draw.rect(self.screen, self.pygame.Color('black'), self.pygame.Rect(1, 1, 799, 599), width=20)
 
             # Check Collision
             if self.pygame.sprite.collide_rect(self.player, self.door1) and self.door1 in self.door_list:
@@ -143,8 +158,23 @@ class Game():
 
             for door in self.door_list:
                 self.screen.blit(door.surf, door.rect)
+            
+            # Check Collision with Enemy Projectile
+            if self.player.health <= 0:
+                self.screen.fill((0,0,0))
+                running = False
+
+            self.player.surf.set_colorkey('white')
             self.screen.blit(self.player.surf, self.player.rect)
             self.screen.blit(self.enemy.surf, self.enemy.rect)
+            for entity in self.enemies:
+                if self.pygame.sprite.collide_rect(self.player, entity):
+                    entity.kill()
+                    self.player.player_hit(self.health)
+                self.screen.blit(entity.surf, entity.rect)
+            self.screen.blit(self.health.image, (10,10))
             self.pygame.display.flip()
+
+t = Game(pygame)
 
 

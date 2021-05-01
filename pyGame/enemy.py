@@ -1,4 +1,5 @@
 import os
+import random
 from game_setup import *
 
 class Enemy(pygame.sprite.Sprite):
@@ -6,7 +7,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
         self.surf = pygame.image.load('Sprites/Shy_Guy/shy_guy_1.png').convert()
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.surf.set_colorkey('white', RLEACCEL)
         self.rect = self.surf.get_rect()
         self.image_count = 0
         self.movement_sprites = ['Sprites/Shy_Guy/shy_guy_0.png', 'Sprites/Shy_Guy/shy_guy_1.png', 'Sprites/Shy_Guy/shy_guy_2.png']
@@ -19,7 +20,6 @@ class Enemy(pygame.sprite.Sprite):
         pos_y = pos[1]
 
         # Moving towards the player
-        
         if pos_x > self.rect.x:
             if pos_y > self.rect.y:
                 self.rect.move_ip(1,1)
@@ -44,6 +44,7 @@ class Enemy(pygame.sprite.Sprite):
             self.movement_check = True
         
         self.movement_check = True
+
         # Boundary
         if self.rect.left < 0:
             self.rect.left = 0
@@ -58,9 +59,30 @@ class Enemy(pygame.sprite.Sprite):
         if self.movement_check:
             self.image_count = self.image_count + 1
             self.surf = pygame.image.load(self.movement_sprites[self.image_count]).convert()
-            self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+            self.surf.set_colorkey('white', RLEACCEL)
 
             if self.image_count == 2:
                 self.image_count = 0
         self.movement_check = False
 
+class EnemyProjectile(pygame.sprite.Sprite):
+    def __init__(self):
+        super(EnemyProjectile, self).__init__()
+        image = pygame.image.load('Sprites/Mushroom/mushroom_enemy.png')
+        image.set_colorkey((247,247,247), RLEACCEL)
+        self.surf = pygame.transform.smoothscale(image.convert_alpha(), (50,50))
+        self.surf.set_colorkey((247,247,247), RLEACCEL)
+        self.rect = self.surf.get_rect(
+            center=(
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT),
+            )
+        )
+        self.speed = random.randint(1, 3)
+
+    # Move the sprite based on speed
+    # Remove the sprite when it passes the left edge of the screen
+    def update(self):
+        self.rect.move_ip(-self.speed, 0)
+        if self.rect.right < 0:
+            self.kill()

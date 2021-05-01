@@ -5,16 +5,18 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         super(Player, self).__init__()
-        look_initial = pygame.image.load("Sprites/Yoshi/1.gif").convert()
-        self.surf = pygame.transform.smoothscale(look_initial, (40, 40)) 
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        image = pygame.image.load("Sprites/Yoshi/1.png").convert()
+        image.set_colorkey((252, 254, 252), RLEACCEL)
+        self.surf = pygame.transform.smoothscale(image.convert_alpha(), (40, 40))
+        self.surf.set_colorkey((252, 254, 252), RLEACCEL)
         self.rect = self.surf.get_rect()
         self.image_count = 0
-        self.movement_sprites = ["Sprites/Yoshi/1.gif", "Sprites/Yoshi/2.gif", "Sprites/Yoshi/3.gif",
-                                "Sprites/Yoshi/4.gif", "Sprites/Yoshi/5.gif", "Sprites/Yoshi/6.gif", 
-                                "Sprites/Yoshi/7.gif"]
+        self.movement_sprites = ["Sprites/Yoshi/1.png", "Sprites/Yoshi/2.png", "Sprites/Yoshi/3.png",
+                                "Sprites/Yoshi/4.png", "Sprites/Yoshi/5.png", "Sprites/Yoshi/6.png", 
+                                "Sprites/Yoshi/7.png"]
         self.movement_check = False
         self.direction_check = False
+        self.health = 5
 
     def move(self, pressed_keys):
         # Arrow-key movement
@@ -65,13 +67,15 @@ class Player(pygame.sprite.Sprite):
             self.image_count = self.image_count + 1
             if self.direction_check == True:
                 look_initial = pygame.image.load(self.movement_sprites[self.image_count]).convert()
-                self.surf = pygame.transform.smoothscale(look_initial, (40, 40)) 
-                self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+                look_initial.set_colorkey((252, 254, 252), RLEACCEL)
+                self.surf = pygame.transform.smoothscale(look_initial.convert_alpha(), (40, 40)) 
+                self.surf.set_colorkey((252, 254, 252), RLEACCEL)
             else:
                 flip = pygame.image.load(self.movement_sprites[self.image_count]).convert()
-                look_initial = pygame.transform.smoothscale(flip, (40, 40)) 
+                flip.set_colorkey((252, 254, 252), RLEACCEL)
+                look_initial = pygame.transform.smoothscale(flip.convert_alpha(), (40, 40))
                 self.surf = pygame.transform.flip(look_initial, True, False)
-                self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+                self.surf.set_colorkey((252, 254, 252), RLEACCEL)
             # Reset image counter
             if self.image_count > 5:
                 self.image_count = 1
@@ -79,6 +83,21 @@ class Player(pygame.sprite.Sprite):
     
     def check_collision(self, sprite):
         if pygame.sprite.spritecollide(self, sprite, True):
-            print("Pls work plssss")
             return True
         return False
+    
+    def player_hit(self, health):
+        self.health = self.health - 1
+        health.image = health.health_ani[self.health]
+
+class HealthBar(pygame.sprite.Sprite):
+      def __init__(self):
+            super().__init__()
+            self.image = pygame.image.load("Sprites/Heart/heart5.png")
+            self.health_ani = [
+                pygame.image.load("Sprites/Heart/heart0.png"), 
+                pygame.image.load("Sprites/Heart/heart.png"),
+                pygame.image.load("Sprites/Heart/heart2.png"), 
+                pygame.image.load("Sprites/Heart/heart3.png"),
+                pygame.image.load("Sprites/Heart/heart4.png"), 
+                pygame.image.load("Sprites/Heart/heart5.png")]
