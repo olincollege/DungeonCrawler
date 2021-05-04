@@ -15,7 +15,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = 500
         self.rect.y = 300
 
-    def move(self, pos):
+    def update(self, pos):
         pos_x = pos[0]
         pos_y = pos[1]
 
@@ -54,6 +54,11 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
+    
+    def check_collision(self, sprite, health_bar):
+        if pygame.sprite.collide_rect(sprite, self):
+            sprite.player_hit(health_bar)
+            self.__init__()
 
     def animation(self):
         if self.movement_check:
@@ -80,9 +85,10 @@ class EnemyProjectile(pygame.sprite.Sprite):
         )
         self.speed = random.randint(1, 3)
 
-    # Move the sprite based on speed
-    # Remove the sprite when it passes the left edge of the screen
-    def update(self):
+    def update(self, sprite, health_bar):
+        if pygame.sprite.collide_rect(sprite, self):
+            self.kill()
+            sprite.player_hit(health_bar)
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
             self.kill()

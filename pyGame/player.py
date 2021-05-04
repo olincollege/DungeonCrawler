@@ -16,9 +16,11 @@ class Player(pygame.sprite.Sprite):
                                 "Sprites/Yoshi/7.png"]
         self.movement_check = False
         self.direction_check = False
+        self.rect.x = 100
+        self.rect.y = 300
         self.health = 5
 
-    def move(self, pressed_keys):
+    def update(self, pressed_keys):
         # Arrow-key movement
         if pressed_keys[K_UP]:
             self.rect.move_ip(0, -1)
@@ -81,19 +83,14 @@ class Player(pygame.sprite.Sprite):
                 self.image_count = 1
         self.movement_check = False
     
-    def check_collision(self, sprite):
-        if pygame.sprite.spritecollide(self, sprite, True):
-            return True
-        return False
-    
     def player_hit(self, health):
         self.health = self.health - 1
-        health.image = health.health_ani[self.health]
+        health.surf = health.health_ani[self.health]
 
 class HealthBar(pygame.sprite.Sprite):
       def __init__(self):
             super().__init__()
-            self.image = pygame.image.load("Sprites/Heart/heart5.png")
+            self.surf = pygame.image.load("Sprites/Heart/heart5.png")
             self.health_ani = [
                 pygame.image.load("Sprites/Heart/heart0.png"), 
                 pygame.image.load("Sprites/Heart/heart.png"),
