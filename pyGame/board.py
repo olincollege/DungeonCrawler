@@ -3,24 +3,24 @@ from game_setup import *
 class Board(pygame.sprite.Sprite):
 
 
-    def __init__(self, x_cord, y_cord):
-        super(Board, self).__init__()
-        look_initial = pygame.image.load("Sprites/Door/bottom_door.png").convert()
-        self.surf = pygame.transform.smoothscale(look_initial, (40, 40)) 
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-        self.rect = self.surf.get_rect()
-        self.rect.x = x_cord
-        self.rect.y = y_cord
+    def __init__(self, pyGame):
+        self.pygame = pyGame
+        pygame.init()
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    def fade(self, game): 
-        fade = game.pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        # Initialize starting room background
+        background_raw = pygame.image.load("Sprites/Background/cloud_background.jpg")
+        self.BACKGROUND = pygame.transform.smoothscale(background_raw, (800, 600)) 
+
+    def fade(self): 
+        fade = self.pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         fade.fill((0,0,0))
         for alpha in range(0, 300):
-            game.pygame.time.delay(8)
+            self.pygame.time.delay(8)
             fade.set_alpha(alpha)
-            game.screen.blit(fade, (0,0))
-            game.pygame.display.update()
-            game.pygame.time.delay(1)
+            self.screen.blit(fade, (0,0))
+            self.pygame.display.update()
+            self.pygame.time.delay(1)
 
     # Move to board.py
     def initialize_new_room(self, game, door_picked):
@@ -30,8 +30,8 @@ class Board(pygame.sprite.Sprite):
         game.return_door.rect.y = 0
         game.player.rect.y = 80
         game.room = game.room_def[game.room_node.name]
-        game.background_raw = game.pygame.image.load(f"Stages/{game.room.sprite}")
-        game.BACKGROUND = game.pygame.transform.smoothscale(game.background_raw, (800, 600)) 
+        self.background_raw = self.pygame.image.load(f"Stages/{game.room.sprite}")
+        self.BACKGROUND = self.pygame.transform.smoothscale(self.background_raw, (800, 600)) 
         print(game.room_node)
         print(f"num children: {len(list(game.room_node.children))}")
         if len(game.room_node.children) == 1:
@@ -64,3 +64,12 @@ class Board(pygame.sprite.Sprite):
         if len(game.room_node.children) == 0:
             game.door_list = [game.return_door]
         print(game.door_list)
+
+    def draw_objects(self, game):
+        self.screen.blit(self.BACKGROUND, (0,0))
+        for entity in game.all_sprites:
+            self.screen.blit(entity.surf, entity.rect)
+        self.screen.blit(game.health_bar.surf, (10,10))
+        for door in game.door_list:
+            self.screen.blit(door.surf, door.rect)
+        self.pygame.display.flip()

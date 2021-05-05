@@ -56,40 +56,46 @@ class Player(pygame.sprite.Sprite):
         time_hit = pygame.time.get_ticks()
         damage_1 = pygame.image.load('Sprites/Yoshi/damage.png').convert()
         damage_1 = pygame.transform.smoothscale(damage_1.convert_alpha(), (40, 40))
+        damage_1.set_colorkey((252, 254, 252), RLEACCEL)
         damage_2 = pygame.image.load('Sprites/Yoshi/damage1.png').convert()
         damage_2 = pygame.transform.smoothscale(damage_2.convert_alpha(), (40, 40))
+        damage_2.set_colorkey((252, 254, 252), RLEACCEL)
         resting = pygame.image.load('Sprites/Yoshi/1.png').convert()
         resting = pygame.transform.smoothscale(resting.convert_alpha(), (40, 40))
+        resting.set_colorkey((252, 254, 252), RLEACCEL)
 
         if not self.hittable:
-            damage_2.set_colorkey((255, 255, 255), RLEACCEL)
-            # self.surf = pygame.transform.flip(damage_2, True, False)
+            
             if self.direction_check:
                 self.surf = pygame.transform.smoothscale(damage_2, (40,40))
             else:
                 self.surf = pygame.transform.flip(damage_2, True, False)
-            self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+            self.surf.set_colorkey((252, 254, 252), RLEACCEL)
 
+
+            # Alternate between damage sprites. If statement is necessary so that
+            # the if statement will change what is run based on the number of ticks
+            # passed.
             if self.time_hit + 100 <= pygame.time.get_ticks():
                 if self.direction_check:
                     self.surf = pygame.transform.smoothscale(damage_1, (40,40))
                 else:
                     self.surf = pygame.transform.flip(damage_1, True, False)
-                self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+                self.surf.set_colorkey((252, 254, 252), RLEACCEL)
 
             if self.time_hit + 200 <= pygame.time.get_ticks():
                 if self.direction_check:
                     self.surf = pygame.transform.smoothscale(damage_2, (40,40))
                 else:
                     self.surf = pygame.transform.flip(damage_2, True, False)
-                self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+                self.surf.set_colorkey((252, 254, 252), RLEACCEL)
 
             if self.time_hit + 300 <= pygame.time.get_ticks():
                 if self.direction_check:
                     self.surf = pygame.transform.smoothscale(damage_1, (40,40))
                 else:
                     self.surf = pygame.transform.flip(damage_1, True, False)
-                self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+                self.surf.set_colorkey((252, 254, 252), RLEACCEL)
 
             if self.time_hit + 400 <= pygame.time.get_ticks():
                 if self.direction_check:
@@ -112,6 +118,9 @@ class Player(pygame.sprite.Sprite):
                     self.surf = pygame.transform.flip(damage_1, True, False)
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
 
+            # Resume normal sprite animation
+            self.animation()
+
     def player_hit(self, health):
         if self.hittable:
             print('hit')
@@ -120,25 +129,6 @@ class Player(pygame.sprite.Sprite):
             health.surf = health.health_ani[self.health]
             self.hittable = False
             self.health = self.health - 1
-            # Now show the other color.
-        """
-        self.surf = pygame.transform.smoothscale(damage_2.convert_alpha(), (40, 40))
-        self.surf = pygame.transform.flip(damage_2, True, False)
-        self.surf.set_colorkey((252, 254, 252), RLEACCEL)
-
-        self.surf = pygame.transform.smoothscale(damage_1.convert_alpha(), (40, 40))
-        self.surf = pygame.transform.flip(damage_1, True, False)
-        self.surf.set_colorkey((252, 254, 252), RLEACCEL)
-
-        self.surf = pygame.transform.smoothscale(damage_2.convert_alpha(), (40, 40))
-        self.surf = pygame.transform.flip(damage_2, True, False)
-        self.surf.set_colorkey((252, 254, 252), RLEACCEL)
-        """
-        """
-        self.surf = pygame.transform.smoothscale(resting.convert_alpha(), (40, 40))
-        self.surf = pygame.transform.flip(resting, True, False)
-        self.surf.set_colorkey((252, 254, 252), RLEACCEL)
-        """
         
 
 class HealthBar(pygame.sprite.Sprite):

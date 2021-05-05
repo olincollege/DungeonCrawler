@@ -10,20 +10,12 @@ import pygame
 class Game():
 
     def __init__(self,pyGame):
-        self.pygame = pyGame
-        pygame.init()
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-        # Initialize starting room background
-        background_raw = pygame.image.load("Sprites/Background/cloud_background.jpg")
-        self.BACKGROUND = pygame.transform.smoothscale(background_raw, (800, 600)) 
 
         # Create Board
-        self.board = Board(0,0)
+        self.board = Board(pygame)
         # Timer for Enemy Projectile
         self.ADDENEMY = pygame.USEREVENT + 1
         pygame.time.set_timer(self.ADDENEMY, 1000)
-
 
         ####### Need to refactor 
         # Set room variable equal to spawn room to initialize
@@ -65,7 +57,7 @@ class Game():
         counter = 0
         while running:
             # Exit statement
-            for event in self.pygame.event.get():
+            for event in self.board.pygame.event.get():
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE or event.type == QUIT:
                         running = False
@@ -76,7 +68,7 @@ class Game():
                     self.all_sprites.add(enemy_pro)
 
             # Player Movement
-            pressed_keys = self.pygame.key.get_pressed()
+            pressed_keys = self.board.pygame.key.get_pressed()
             self.controller.move_player(pressed_keys)
             self.player.animation()
             self.player.check_invincibility()
@@ -96,37 +88,30 @@ class Game():
 
 
             # Check Collision
-            if self.pygame.sprite.collide_rect(self.player, self.door1) and self.door1 in self.door_list:
-                self.board.fade(self)
+            if self.board.pygame.sprite.collide_rect(self.player, self.door1) and self.door1 in self.door_list:
+                self.board.fade()
                 self.board.initialize_new_room(self,1)
             elif pygame.sprite.collide_rect(g.player, g.door2) and self.door2 in self.door_list:
-                self.board.fade(self)
+                self.board.fade()
                 self.board.initialize_new_room(self,2)
-            elif self.pygame.sprite.collide_rect(self.player, self.door3) and self.door3 in self.door_list:
-                self.board.fade(self)
+            elif self.board.pygame.sprite.collide_rect(self.player, self.door3) and self.door3 in self.door_list:
+                self.board.fade()
                 self.board.initialize_new_room(self,3)
-            elif g.pygame.sprite.collide_rect(self.player, self.return_door) and self.return_door in self.door_list:
-                self.board.fade(self)
+            elif self.board.pygame.sprite.collide_rect(self.player, self.return_door) and self.return_door in self.door_list:
+                self.board.fade()
                 self.room_node = self.room_node.parent
                 self.board.return_old_room(self,0)
 
             for door in self.door_list:
-                self.screen.blit(door.surf, door.rect)
+                self.board.screen.blit(door.surf, door.rect)
                     
             # Check Collision with Enemy Projectile
             if self.player.health <= 0:
-                self.screen.fill((0,0,0))
+                self.board.screen.fill((0,0,0))
                 running = False
 
             # Printing things on screen
-            self.screen.blit(g.BACKGROUND, (0,0))
-            for entity in self.all_sprites:
-                self.screen.blit(entity.surf, entity.rect)
-            self.screen.blit(self.health_bar.surf, (10,10))
-            for door in self.door_list:
-                self.screen.blit(door.surf, door.rect)
-            self.pygame.display.flip()
-
+            self.board.draw_objects(self)
 
 
 
