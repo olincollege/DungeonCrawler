@@ -66,7 +66,7 @@ class Enemy(pygame.sprite.Sprite):
             self.surf = pygame.image.load(self.movement_sprites[self.image_count]).convert()
             self.surf.set_colorkey('white', RLEACCEL)
 
-            if self.image_count == 2:
+            if self.image_count == len(self.movement_sprites) - 1:
                 self.image_count = 0
         self.movement_check = False
 
