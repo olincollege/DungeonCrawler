@@ -65,7 +65,6 @@ class Player(pygame.sprite.Sprite):
         resting.set_colorkey((252, 254, 252), RLEACCEL)
 
         if not self.hittable:
-            
             if self.direction_check:
                 self.surf = pygame.transform.smoothscale(damage_2, (40,40))
             else:

@@ -10,11 +10,10 @@ from anytree.exporter import DotExporter
 from anytree.search import findall_by_attr
 
 class Room:
-    def __init__(self, room_sprite, num_enemies, boundaries):
+    def __init__(self, room_sprite, num_enemies, num_ghosts):
         self.sprite = room_sprite
         self.num_enemies = num_enemies
-        self.boundaries = boundaries
-
+        self.num_ghosts = num_ghosts
 
 class WorldGeneration:
     """
@@ -94,7 +93,7 @@ class WorldGeneration:
         node_name = random.choice(end_nodes)
         node_ref = list(findall_by_attr(self.spawn, node_name))[0]
         Node("Boss Room", parent=node_ref)
-        self.obj_dict['Boss Room'] = Room('boss', 1, 3)
+        self.obj_dict['Boss Room'] = Room('boss', 0,0)
         DotExporter(self.spawn).to_picture('game_map.png')
 
     def create_rooms(self, name, level):
@@ -103,9 +102,12 @@ class WorldGeneration:
         generated map.
         """
         sprite = random.choice(self.ROOM_SPRITES)
-        num_enemies = (random.randint(1,3)*level)//2
-        boundaries = 3  # Define this when we know more about rooms
-        self.obj_dict[name] = Room(sprite, num_enemies, boundaries)
+        # DEBUG LINE
+        num_enemies = 1
+        num_ghosts = 1
+        #num_enemies = (random.randint(1,3)*level)//2
+        #num_ghosts = random.randint(1,2)*(level-2)//2
+        self.obj_dict[name] = Room(sprite, num_enemies, num_ghosts)
 
     @property
     def tree(self):

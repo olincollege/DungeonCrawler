@@ -17,9 +17,6 @@ class Game():
         self.ADDENEMY = pygame.USEREVENT + 1
         pygame.time.set_timer(self.ADDENEMY, 1000)
 
-        ####### Need to refactor 
-        # Set room variable equal to spawn room to initialize
-        # Should probably put this in init when we make it into a class
         self.wgen = WorldGeneration()
         self.wgen.generate_world()
         self.tree = self.wgen.tree
@@ -37,16 +34,15 @@ class Game():
 
         self.door_list = [self.door1, self.door2, self.door3]
 
-        self.enemies = pygame.sprite.Group()
+        self.enemy_list = []
+        self.ghost_list = []
+        self.projectiles = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group()
 
         # Create Player
         self.player = Player()
         self.all_sprites.add(self.player)
         self.controller = Controller(self.player)
-        # Boss creation
-        self.boss = Enemy()
-        self.all_sprites.add(self.boss)
 
         # Health Bar
         self.health_bar = HealthBar()
@@ -64,7 +60,7 @@ class Game():
                 # Enemy Projectile
                 if event.type == g.ADDENEMY:
                     enemy_pro = EnemyProjectile()
-                    self.enemies.add(enemy_pro)
+                    self.projectiles.add(enemy_pro)
                     self.all_sprites.add(enemy_pro)
 
             # Player Movement
@@ -75,16 +71,23 @@ class Game():
             self.player.animate_invincibility()
 
             ### Need to refactor
-            # Boss Movement
+            # Enemy Movement
+            player_pos = (self.player.rect.x, self.player.rect.y)
             if counter%10 == 0:
                 player_pos = (self.player.rect.x, self.player.rect.y)
-                self.boss.update(player_pos)
-                self.boss.check_collision(self.player, self.health_bar)
-                self.boss.animation()
+                for enemy in self.enemy_list:
+                    enemy.update(player_pos)
+                    enemy.check_collision(self.player, self.health_bar)
+                    enemy.animation()
+            if counter%20 == 0:
+                for ghost in self.ghost_list:
+                    ghost.update(player_pos, self.player.direction_check)
+                    ghost.check_collision(self.player, self.health_bar)
+                    ghost.animation()
             counter += 1
 
             # Enemy Movement
-            self.enemies.update(self.player, self.health_bar)
+            self.projectiles.update(self.player, self.health_bar)
 
 
             # Check Collision
