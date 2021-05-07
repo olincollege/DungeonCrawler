@@ -4,6 +4,7 @@ from enemy import Enemy, EnemyProjectile
 from board import Board
 from door import Door
 from controller import Controller
+from yoshiattack import YoshiAttack
 from generate_world import WorldGeneration, Room
 import pygame
 
@@ -44,6 +45,9 @@ class Game():
         self.all_sprites.add(self.player)
         self.controller = Controller(self.player)
 
+        # Attack Sprite
+        self.attack = YoshiAttack(self.player)
+
         # Health Bar
         self.health_bar = HealthBar()
 
@@ -66,9 +70,11 @@ class Game():
             # Player Movement
             pressed_keys = self.board.pygame.key.get_pressed()
             self.controller.move_player(pressed_keys)
+            self.controller.attack(pressed_keys)
             self.player.animation()
             self.player.check_invincibility()
             self.player.animate_invincibility()
+            self.attack.animate()
 
             ### Need to refactor
             # Enemy Movement
@@ -78,7 +84,10 @@ class Game():
                 for enemy in self.enemy_list:
                     enemy.update(player_pos)
                     enemy.check_collision(self.player, self.health_bar)
+                    enemy.enemy_hit(self.attack, self.player.attack)
                     enemy.animation()
+                    if enemy.health == 0:
+                        self.enemy_list.remove(enemy)
             if counter%20 == 0:
                 for ghost in self.ghost_list:
                     ghost.update(player_pos, self.player.direction_check)
@@ -103,7 +112,7 @@ class Game():
             elif self.board.pygame.sprite.collide_rect(self.player, self.return_door) and self.return_door in self.door_list:
                 self.board.fade()
                 self.room_node = self.room_node.parent
-                self.board.return_old_room(self,0)
+                self.board.return_old_room(self)
 
             for door in self.door_list:
                 self.board.screen.blit(door.surf, door.rect)

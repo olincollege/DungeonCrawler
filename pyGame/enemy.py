@@ -24,6 +24,11 @@ class Enemy(pygame.sprite.Sprite):
         if pygame.sprite.collide_rect(sprite, self):
             sprite.player_hit(health_bar)
 
+    def enemy_hit(self, sprite, attack):
+        if attack and pygame.sprite.collide_rect(sprite, self):
+            self.health -= 1
+            print('hit enemy!')
+
 class ShyGuy(Enemy):
 
     def __init__(self, spawn):
