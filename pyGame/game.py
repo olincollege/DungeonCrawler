@@ -16,7 +16,7 @@ class Game():
         self.board = Board(pygame)
         # Timer for Enemy Projectile
         self.ADDENEMY = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.ADDENEMY, 1000)
+        pygame.time.set_timer(self.ADDENEMY, 2000)
 
         self.wgen = WorldGeneration()
         self.wgen.generate_world()
@@ -65,7 +65,6 @@ class Game():
                 if event.type == g.ADDENEMY:
                     enemy_pro = EnemyProjectile()
                     self.projectiles.add(enemy_pro)
-                    self.all_sprites.add(enemy_pro)
 
             # Player Movement
             pressed_keys = self.board.pygame.key.get_pressed()
@@ -88,7 +87,7 @@ class Game():
                     enemy.animation()
                     if enemy.health == 0:
                         self.enemy_list.remove(enemy)
-            if counter%20 == 0:
+            if counter%5 == 0:
                 for ghost in self.ghost_list:
                     ghost.update(player_pos, self.player.direction_check)
                     ghost.check_collision(self.player, self.health_bar)
@@ -103,16 +102,20 @@ class Game():
             if self.board.pygame.sprite.collide_rect(self.player, self.door1) and self.door1 in self.door_list:
                 self.board.fade()
                 self.board.initialize_new_room(self,1)
+                self.projectiles.empty()
             elif pygame.sprite.collide_rect(g.player, g.door2) and self.door2 in self.door_list:
                 self.board.fade()
                 self.board.initialize_new_room(self,2)
+                self.projectiles.empty()
             elif self.board.pygame.sprite.collide_rect(self.player, self.door3) and self.door3 in self.door_list:
                 self.board.fade()
                 self.board.initialize_new_room(self,3)
+                self.projectiles.empty()
             elif self.board.pygame.sprite.collide_rect(self.player, self.return_door) and self.return_door in self.door_list:
                 self.board.fade()
                 self.room_node = self.room_node.parent
                 self.board.return_old_room(self)
+                self.projectiles.empty()
 
             for door in self.door_list:
                 self.board.screen.blit(door.surf, door.rect)

@@ -66,7 +66,6 @@ class Player(pygame.sprite.Sprite):
     def check_invincibility(self):
         if not self.hittable and self.time_hit + 1200 <= pygame.time.get_ticks():
             self.hittable = True
-            print('Invincibility over')
 
     def animate_invincibility(self):
         white = False
@@ -81,24 +80,19 @@ class Player(pygame.sprite.Sprite):
             if (self.time_hit - pygame.time.get_ticks())%400 <= 200:
                 white = True
                 black = False
-                print('White')
             else:
                 white = False
                 black = True
-                print('Black')
             
             if black:
                 # Load the black image
                 damage = pygame.image.load('Sprites/Yoshi/damage.png').convert()
                 damage.set_colorkey((251, 255, 252), RLEACCEL)
-                print('set damage')
             elif white:
                 # Load the white image
                 damage = pygame.image.load('Sprites/Yoshi/damage1.png').convert()
                 damage.set_colorkey((251, 255, 252), RLEACCEL)
-                print('set damage')
             else:
-                print('didnt set')
                 return None
 
             # Orients Yoshi according to what direction the player is moving him
@@ -110,7 +104,6 @@ class Player(pygame.sprite.Sprite):
                     self.surf = pygame.transform.rotate(damage, -90)
                     self.surf.set_colorkey((251, 255, 252), RLEACCEL)
             else:
-                print('here')
                 damage = pygame.transform.flip(damage, True, False)
                 if self.up_check:
                     self.surf = pygame.transform.rotate(damage, -90)
@@ -123,13 +116,11 @@ class Player(pygame.sprite.Sprite):
                         
             # Resume normal sprite animation
             if self.time_hit + 1200 <= pygame.time.get_ticks():
-                print('hi')
                 self.movement_check = True
                 self.animation()
 
     def player_hit(self, health):
         if self.hittable:
-            print('hit')
             self.hittable = False
             self.time_hit = pygame.time.get_ticks()
             health.surf = health.health_ani[self.health-1]

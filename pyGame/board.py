@@ -121,8 +121,9 @@ class Board(pygame.sprite.Sprite):
 
     def draw_objects(self, game):
         self.screen.blit(self.BACKGROUND, (0,0))
-        for entity in game.all_sprites:
+        for entity in game.projectiles:
             self.screen.blit(entity.surf, entity.rect)
+        self.screen.blit(game.player.surf, game.player.rect)
         self.screen.blit(game.health_bar.surf, (10,10))
         for door in game.door_list:
             self.screen.blit(door.surf, door.rect)
