@@ -36,7 +36,7 @@ class WorldGeneration:
     # then we'd create a dictionary where the key is the room type and value is a list
     # of the names of background images for that type.'
     # SAMPLE LINE: ROOM_SPRITES = os.listdir('assets/backgrounds')
-    ROOM_SPRITES = os.listdir('Stages') # Placeholder
+    ROOM_SPRITES = os.listdir('Stages/levels') # Placeholder
 
     def __init__(self):
         """
@@ -75,7 +75,7 @@ class WorldGeneration:
         # Generating child rooms
         for i in range(0,num_children):
             next_room = Node(f"{parent_room.name}_{i}", parent=parent_room)
-            # Creating object for that room
+            # Creating object for the room
             self.create_rooms(next_room.name, level)
             # Generating sub-children
             self.generate_rooms(next_room, level + 1)
@@ -93,7 +93,7 @@ class WorldGeneration:
         node_name = random.choice(end_nodes)
         node_ref = list(findall_by_attr(self.spawn, node_name))[0]
         Node("Boss Room", parent=node_ref)
-        self.obj_dict['Boss Room'] = Room('boss', 0,0)
+        self.obj_dict['Boss Room'] = Room('boss_room/boss.png', 0,0)
         DotExporter(self.spawn).to_picture('game_map.png')
 
     def create_rooms(self, name, level):
@@ -103,10 +103,8 @@ class WorldGeneration:
         """
         sprite = random.choice(self.ROOM_SPRITES)
         # DEBUG LINE
-        num_enemies = 1
-        num_ghosts = 1
-        #num_enemies = (random.randint(1,3)*level)//2
-        #num_ghosts = random.randint(1,2)*(level-2)//2
+        num_enemies = (random.randint(1,3)*level)//2
+        num_ghosts = random.randint(1,2)*(level-2)//2
         self.obj_dict[name] = Room(sprite, num_enemies, num_ghosts)
 
     @property

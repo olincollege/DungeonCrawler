@@ -10,7 +10,7 @@ class Board(pygame.sprite.Sprite):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
         # Initialize starting room background
-        background_raw = pygame.image.load("Sprites/Background/cloud_background.jpg")
+        background_raw = pygame.image.load("Stages/spawn/spawn.png")
         self.BACKGROUND = pygame.transform.smoothscale(background_raw, (800, 600)) 
 
     def fade(self): 
@@ -43,7 +43,10 @@ class Board(pygame.sprite.Sprite):
 
         # Finding the corresponding room object and pulling info
         game.room = game.room_def[game.room_node.name]
-        self.background_raw = self.pygame.image.load(f"Stages/{game.room.sprite}")
+        if game.room_node.name == "Boss Room":
+            self.background_raw = self.pygame.image.load(f"Stages/boss/stage_6.png")
+        else:
+            self.background_raw = self.pygame.image.load(f"Stages/levels/{game.room.sprite}")
         self.BACKGROUND = self.pygame.transform.smoothscale(self.background_raw, (800, 600))
 
         # Creating enemies based on num_enemies
@@ -103,7 +106,11 @@ class Board(pygame.sprite.Sprite):
         game.return_door.rect.y = 0
         
         game.room = game.room_def[game.room_node.name]
-        self.background_raw = self.pygame.image.load(f"Stages/{game.room.sprite}")
+        if name == "Spawn":
+            self.background_raw = self.pygame.image.load("Stages/spawn/spawn.png")
+        else:
+            self.background_raw = self.pygame.image.load(f"Stages/levels/{game.room.sprite}")
+
         self.BACKGROUND = self.pygame.transform.smoothscale(self.background_raw, (800, 600)) 
         print(game.room_node)
         print(f"num children: {len(list(game.room_node.children))}")

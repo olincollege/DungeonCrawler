@@ -70,13 +70,11 @@ class Player(pygame.sprite.Sprite):
     def animate_invincibility(self):
         white = False
         black = False
-
         # Function should only occur when Yoshi is invincible after being hit
         if not self.hittable:
             # Based on how much time has passed since the time Yoshi was hit, we will
             # choose whether to flash white or black. This is to make Yoshi appear to be
             # continuously flashing.
-
             if (self.time_hit - pygame.time.get_ticks())%400 <= 200:
                 white = True
                 black = False

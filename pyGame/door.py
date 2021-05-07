@@ -6,7 +6,7 @@ class Door(pygame.sprite.Sprite):
         super(Door, self).__init__()
         image = pygame.image.load('Sprites/Door/bottom_door.png').convert()
         image.set_colorkey('white', RLEACCEL)
-        self.surf = pygame.transform.smoothscale(image.convert_alpha(), (40, 40))
+        self.surf = pygame.transform.smoothscale(image.convert_alpha(), (60, 30))
         self.surf.set_colorkey('white', RLEACCEL)
         self.rect = self.surf.get_rect()
         self.rect.x = x

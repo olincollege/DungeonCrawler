@@ -9,14 +9,38 @@ from generate_world import WorldGeneration, Room
 import pygame
 
 class Game():
+    """ 
+    Main model class to run the Dungeon Crawler.
 
+    attrs:
+        board: Instance of the board class
+        ADDENEMY: pygame event to show when to add a projectile
+        wgen: Instance of WorldGeneration class
+        tree: Generated tree from the WorldGeneration class
+        room_def: Dictionary mapping tree node names to room objects
+        room_node: Node of the tree that the player is in
+        room: Room object that the player is currently in
+        door1: Far left door sprite
+        door2: Middle door sprite
+        door3: Far right door sprite
+        return_door: Door that leads to the previous room
+        door_list: List of doors that should be rendered
+        enemy_list: List of Shy_Guy enemies that should be rendered
+        ghost_list: List of ghost enemies that should be rendered
+        projectiles: PyGame sprite group containing all projectiles.
+    """
     def __init__(self,pyGame):
+        """
+        Initializes the Game class.
 
+        attrs:
+            pyGame: The pyGame library
+        """
         # Create Board
         self.board = Board(pygame)
         # Timer for Enemy Projectile
         self.ADDENEMY = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.ADDENEMY, 2000)
+        pygame.time.set_timer(self.ADDENEMY, 4000)
 
         self.wgen = WorldGeneration()
         self.wgen.generate_world()
@@ -25,7 +49,6 @@ class Game():
         self.room_node = self.tree
         self.room_def['Spawn'] = Room('cloud_background.jpg', 0, 0)
         self.room = self.room_def['Spawn']
-        self.num_children = len(self.room_node.children)
 
         # Door creation
         self.door1 = Door(200, 560)
@@ -38,11 +61,9 @@ class Game():
         self.enemy_list = []
         self.ghost_list = []
         self.projectiles = pygame.sprite.Group()
-        self.all_sprites = pygame.sprite.Group()
 
         # Create Player
         self.player = Player()
-        self.all_sprites.add(self.player)
         self.controller = Controller(self.player)
 
         # Attack Sprite
@@ -51,8 +72,20 @@ class Game():
         # Health Bar
         self.health_bar = HealthBar()
 
+    @property
+    def num_children(self):
+        """
+        Property representing the number of children a certain node has.
+        """
+        self.num_children = len(self.room_node.children)
 
     def run(self):
+        """
+        Method to run the game.
+
+        Runs a while loop to run all checks and processes necessary for the
+        game to run.
+        """
         running = True
         counter = 0
         while running:
@@ -85,6 +118,7 @@ class Game():
                     enemy.check_collision(self.player, self.health_bar)
                     enemy.enemy_hit(self.attack, self.player.attack)
                     enemy.animation()
+                    enemy.hit_animation()
                     if enemy.health == 0:
                         self.enemy_list.remove(enemy)
             if counter%5 == 0:
@@ -127,14 +161,6 @@ class Game():
 
             # Printing things on screen
             self.board.draw_objects(self)
-
-
-
-
-
-
-
-
 
 # Initialize 
 
