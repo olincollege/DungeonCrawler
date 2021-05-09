@@ -1,4 +1,6 @@
-from game_setup import *
+"""
+Contains the Model class Game.
+"""
 from player import Player, HealthBar
 from enemy import Enemy, EnemyProjectile
 from board import Board
@@ -7,9 +9,14 @@ from controller import Controller
 from yoshiattack import YoshiAttack
 from generate_world import WorldGeneration, Room
 import pygame
+from pygame.locals import(
+    K_ESCAPE,
+    KEYDOWN,
+    QUIT,
+)
 
 class Game():
-    """ 
+    """
     Main model class to run the Dungeon Crawler.
 
     attrs:
@@ -64,7 +71,7 @@ class Game():
 
         # Create Player
         self.player = Player()
-        self.controller = Controller(self.player)
+        self.controller = Controller(self.player, self.board)
 
         # Attack Sprite
         self.attack = YoshiAttack(self.player)
@@ -91,12 +98,11 @@ class Game():
         while running:
             # Exit statement
             for event in self.board.pygame.event.get():
-                if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE or event.type == QUIT:
+                if event.type == KEYDOWN and (event.key == K_ESCAPE or event.type == QUIT):
                         running = False
                 # Enemy Projectile
-                if event.type == g.ADDENEMY:
-                    enemy_pro = EnemyProjectile()
+                elif event.type == g.ADDENEMY:
+                    enemy_pro = EnemyProjectile(self.board)
                     self.projectiles.add(enemy_pro)
 
             # Player Movement
@@ -120,6 +126,7 @@ class Game():
                     enemy.animation()
                     enemy.hit_animation()
                     if enemy.health == 0:
+                        self.room.num_enemies-=1
                         self.enemy_list.remove(enemy)
             if counter%5 == 0:
                 for ghost in self.ghost_list:
@@ -133,7 +140,8 @@ class Game():
 
 
             # Check Collision
-            if self.board.pygame.sprite.collide_rect(self.player, self.door1) and self.door1 in self.door_list:
+            if self.board.pygame.sprite.collide_rect(self.player, self.door1) \
+                and self.door1 in self.door_list:
                 self.board.fade()
                 self.board.initialize_new_room(self,1)
                 self.projectiles.empty()
@@ -141,11 +149,13 @@ class Game():
                 self.board.fade()
                 self.board.initialize_new_room(self,2)
                 self.projectiles.empty()
-            elif self.board.pygame.sprite.collide_rect(self.player, self.door3) and self.door3 in self.door_list:
+            elif self.board.pygame.sprite.collide_rect(self.player, self.door3) and self.door3 \
+                in self.door_list:
                 self.board.fade()
                 self.board.initialize_new_room(self,3)
                 self.projectiles.empty()
-            elif self.board.pygame.sprite.collide_rect(self.player, self.return_door) and self.return_door in self.door_list:
+            elif self.board.pygame.sprite.collide_rect(self.player, self.return_door) \
+                and self.return_door in self.door_list:
                 self.board.fade()
                 self.room_node = self.room_node.parent
                 self.board.return_old_room(self)
@@ -153,7 +163,7 @@ class Game():
 
             for door in self.door_list:
                 self.board.screen.blit(door.surf, door.rect)
-                    
+
             # Check Collision with Enemy Projectile
             if self.player.health <= 0:
                 self.board.screen.fill((0,0,0))
@@ -162,12 +172,7 @@ class Game():
             # Printing things on screen
             self.board.draw_objects(self)
 
-# Initialize 
+# Initialize
 
 g = Game(pygame)
 g.run()
-
-# Group Creation
-
-
-

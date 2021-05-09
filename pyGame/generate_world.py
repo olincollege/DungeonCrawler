@@ -3,13 +3,19 @@ WorldGeneration and Room class.
 """
 import random
 import os
-import cv2, csv, os, statistics
-import numpy as np
 from anytree import Node, LevelOrderGroupIter
 from anytree.exporter import DotExporter
 from anytree.search import findall_by_attr
 
 class Room:
+    """
+    Room object containing information on how room should be generated.
+
+    attrs:
+        room_sprite: The background image for the room
+        num_enemies: The number of shy guy enemies to spawn
+        num_ghosts: The number of ghosts to spawn
+    """
     def __init__(self, room_sprite, num_enemies, num_ghosts):
         self.sprite = room_sprite
         self.num_enemies = num_enemies

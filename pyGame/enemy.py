@@ -1,10 +1,14 @@
+"""
+File containing the enemy sprite class and Shy Guy and Ghost subclasses
+"""
+import pygame
 import os
 import random
-from game_setup import *
+from pygame.locals import RLEACCEL
 
 class Enemy(pygame.sprite.Sprite):
     """
-    Parent class for all enemy sprites. 
+    Parent class for all enemy sprites.
 
     attrs:
         movement_sprites: List of all enemy sprites
@@ -20,14 +24,15 @@ class Enemy(pygame.sprite.Sprite):
         or not
         hit_time: Int representing the time that the sprite was hit
     """
-    def __init__(self, sprite_path, health, spawn):
+    def __init__(self, sprite_path, health, spawn, board):
         """
         Initializes the Enemy class.
 
         args:
             sprite_path: Path to the sprite images
             health: Int representing the total health
-            spawn: Two element tuple representing coordinates to spawn at   
+            spawn: Two element tuple representing coordinates to spawn at
+            board: An instance of the board class
         """
         super(Enemy, self).__init__()
         self.movement_sprites = os.listdir(sprite_path)
@@ -42,7 +47,8 @@ class Enemy(pygame.sprite.Sprite):
         self.hit_time = 0
         self.rect.x = spawn[0]
         self.rect.y = spawn[1]
-    
+        self.board = board
+
     def check_collision(self, sprite, health_bar):
         """
         Checks whether the enemy has hit the player, causing damage.
@@ -68,25 +74,23 @@ class Enemy(pygame.sprite.Sprite):
         """
         if self.hit_time + 1200 <= pygame.time.get_ticks():
             self.hit = False
-            print('Not invincible')
         if attack and pygame.sprite.collide_rect(sprite, self):
             if not self.hit:
                 self.hit = True
                 self.hit_time = pygame.time.get_ticks()
                 self.health -= 1
-                print('hit enemy!')
 
 class ShyGuy(Enemy):
     """
     Sub-class of Enemy for the Shy Guy enemy type
     """
-    def __init__(self, spawn):
+    def __init__(self, spawn, board):
         """
         args:
             spawn: A 2 element tuple representing x and y coordinates of spawn
             location.
         """
-        super(ShyGuy, self).__init__('Sprites/Shy_Guy', 2, spawn)
+        super(ShyGuy, self).__init__('Sprites/Shy_Guy', 2, spawn, board)
         self.movement_sprites.remove('damage.png')
         self.movement_sprites.remove('damage1.png')
 
@@ -100,7 +104,8 @@ class ShyGuy(Enemy):
         """
         if self.movement_check:
             self.image_count = self.image_count + 1
-            look_initial = pygame.image.load(f"Sprites/Shy_Guy/{self.movement_sprites[self.image_count]}").convert()
+            look_initial = pygame.image.load(f"Sprites/Shy_Guy/{self.movement_sprites[self.image_count]}")\
+            .convert()
             look_initial.set_colorkey('white', RLEACCEL)
             if not self.direction_check:
                 self.surf = pygame.transform.smoothscale(look_initial, (51, 57))
@@ -127,22 +132,19 @@ class ShyGuy(Enemy):
         black = False
 
         if self.hit:
-            print('Entered Animation')
             if (self.hit_time - pygame.time.get_ticks())%400 <= 200:
                 white = True
                 black = False
             else:
                 white = False
                 black = True
-            
+
             if black:
                 # Load the black image
-                print('Flash black')
                 damage = pygame.image.load('Sprites/Shy_Guy/damage.png').convert()
                 damage.set_colorkey('white', RLEACCEL)
             elif white:
                 # Load the white image
-                print('Flash White')
                 damage = pygame.image.load('Sprites/Shy_Guy/damage1.png').convert()
                 damage.set_colorkey('white', RLEACCEL)
             else:
@@ -156,7 +158,7 @@ class ShyGuy(Enemy):
                 self.surf.set_colorkey('white', RLEACCEL)
             self.surf = pygame.transform.smoothscale(damage.convert_alpha(), (51, 57))
             self.surf.set_colorkey('white', RLEACCEL)
-                        
+
             # Resume normal sprite animation
             if self.hit_time + 1200 <= pygame.time.get_ticks():
                 self.movement_check = True
@@ -194,18 +196,18 @@ class ShyGuy(Enemy):
             if pos_y < self.rect.y:
                 self.rect.move_ip(0,-1)
             self.movement_check = True
-        
+
         self.movement_check = True
 
         # Make sure that the sprite always stays in bounds
         if self.rect.left < 0:
             self.rect.left = 0
-        if self.rect.right > SCREEN_WIDTH:
-            self.rect.right = SCREEN_WIDTH
+        if self.rect.right > self.board.screen_width:
+            self.rect.right = self.board.screen_width
         if self.rect.top <= 0:
             self.rect.top = 0
-        if self.rect.bottom >= SCREEN_HEIGHT:
-            self.rect.bottom = SCREEN_HEIGHT
+        if self.rect.bottom >= self.board.screen_height:
+            self.rect.bottom = self.board.screen_height
 
 class Ghost(Enemy):
     """
@@ -215,18 +217,19 @@ class Ghost(Enemy):
         hiding: Boolean representing whether the ghost is 'hiding' from
         the player.
     """
-    def __init__(self, spawn):
+    def __init__(self, spawn, board):
         """
-        Initializes the ghost class. 
+        Initializes the ghost class.
 
         Health is set to a large number because the ghost is meant to
         not be killed.
-        
+
         args:
             spawn: Two element tuple containing x and y spawn positions.
         """
-        super(Ghost, self).__init__('Sprites/Ghost', 99999999999, spawn)
+        super(Ghost, self).__init__('Sprites/Ghost', 99999999999, spawn, board)
         self.hiding = True
+        self.board = board
 
     def animation(self):
         """
@@ -236,11 +239,21 @@ class Ghost(Enemy):
         the image, and when it stops hiding, it updates again.
         """
         if self.hiding:
-            self.surf = pygame.image.load(f"Sprites/Ghost/{self.movement_sprites[1]}").convert()
-            self.surf.set_colorkey('white', RLEACCEL)
+            look_initial = pygame.image.load(f"Sprites/Ghost/{self.movement_sprites[1]}").convert()
+            if self.direction_check:
+                self.surf = pygame.transform.flip(look_initial, True, False)
+                self.surf.set_colorkey('white', RLEACCEL)
+            else:
+                self.surf = look_initial
+                self.surf.set_colorkey('white', RLEACCEL)
         else:
-            self.surf = pygame.image.load(f"Sprites/Ghost/{self.movement_sprites[0]}").convert()
-            self.surf.set_colorkey('white', RLEACCEL)
+            look_initial = pygame.image.load(f"Sprites/Ghost/{self.movement_sprites[0]}").convert()
+            if self.direction_check:
+                self.surf = pygame.transform.flip(look_initial, True, False)
+                self.surf.set_colorkey('white', RLEACCEL)
+            else:
+                self.surf = look_initial
+                self.surf.set_colorkey('white', RLEACCEL)
 
     def update(self, pos, direction_check):
         """
@@ -270,6 +283,7 @@ class Ghost(Enemy):
                 else:
                     self.rect.move_ip(1,0)
                 self.movement_check = True
+                self.direction_check = True
             if pos_x < self.rect.x:
                 if pos_y > self.rect.y:
                     self.rect.move_ip(-1,1)
@@ -278,24 +292,25 @@ class Ghost(Enemy):
                 else:
                     self.rect.move_ip(-1,0)
                 self.movement_check = True
+                self.direction_check = False
             if pos_x == self.rect.x:
                 if pos_y > self.rect.y:
                     self.rect.move_ip(0,1)
                 if pos_y < self.rect.y:
                     self.rect.move_ip(0,-1)
                 self.movement_check = True
-        
+
         self.movement_check = True
 
         # Boundary
         if self.rect.left < 0:
             self.rect.left = 0
-        if self.rect.right > SCREEN_WIDTH:
-            self.rect.right = SCREEN_WIDTH
+        if self.rect.right > self.board.screen_width:
+            self.rect.right = self.board.screen_width
         if self.rect.top <= 0:
             self.rect.top = 0
-        if self.rect.bottom >= SCREEN_HEIGHT:
-            self.rect.bottom = SCREEN_HEIGHT
+        if self.rect.bottom >= self.board.screen_height:
+            self.rect.bottom = self.board.screen_height
 
 class EnemyProjectile(pygame.sprite.Sprite):
     """
@@ -306,16 +321,17 @@ class EnemyProjectile(pygame.sprite.Sprite):
         rect: PyGame rect object representing the sprite.
         speed: Random int determining how fast the projectile will fly.
     """
-    def __init__(self):
+    def __init__(self, board):
         super(EnemyProjectile, self).__init__()
         image = pygame.image.load('Sprites/Mushroom/mushroom_enemy.png')
         image.set_colorkey((247,247,247), RLEACCEL)
         self.surf = pygame.transform.smoothscale(image.convert_alpha(), (50,50))
         self.surf.set_colorkey((247,247,247), RLEACCEL)
+        self.board = board
         self.rect = self.surf.get_rect(
             center=(
-                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
-                random.randint(0, SCREEN_HEIGHT),
+                random.randint(self.board.screen_width + 20, self.board.screen_width + 100),
+                random.randint(0, self.board.screen_height),
             )
         )
         self.speed = random.randint(1, 3)
