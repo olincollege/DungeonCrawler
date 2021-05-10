@@ -27,7 +27,7 @@ or git bash based on your platform.
 
 ### Running the game
 After cloning the repository, navigate to it inside of the terminal and enter the pyGame folder.
-From inside the pyGame folder, run `python game.py` or `python3 game.py` depending on your system.
+From inside the pyGame folder, run `python run.py` or `python3 run.py` depending on your system.
 
 To exit the game, enter the command window while it is running and hit `Ctrl + C`.
 

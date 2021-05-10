@@ -102,7 +102,7 @@ class Game():
                 if event.type == KEYDOWN and (event.key == K_ESCAPE or event.type == QUIT):
                         running = False
                 # Enemy Projectile
-                elif event.type == g.add_enemy:
+                elif event.type == self.add_enemy:
                     enemy_pro = EnemyProjectile(self.board)
                     self.projectiles.add(enemy_pro)
 
@@ -145,7 +145,7 @@ class Game():
                 self.board.fade()
                 self.board.initialize_new_room(self,1)
                 self.projectiles.empty()
-            elif pygame.sprite.collide_rect(g.player, g.door2) and self.door2 in self.door_list:
+            elif pygame.sprite.collide_rect(self.player, self.door2) and self.door2 in self.door_list:
                 self.board.fade()
                 self.board.initialize_new_room(self,2)
                 self.projectiles.empty()
@@ -171,7 +171,3 @@ class Game():
 
             # Printing things on screen
             self.board.draw_objects(self)
-
-# Initialize
-g = Game(pygame)
-g.run()
