@@ -13,7 +13,7 @@ class Door(pygame.sprite.Sprite):
         surf: The pygame surf representing the sprite image
         rect: The pygame rect representing the bounds of the sprite
     """
-    def __init__(self, x, y):
+    def __init__(self, x_cord, y_cord):
         """
         Initializes the door class
 
@@ -27,5 +27,5 @@ class Door(pygame.sprite.Sprite):
         self.surf = pygame.transform.smoothscale(image.convert_alpha(), (60, 30))
         self.surf.set_colorkey('white', RLEACCEL)
         self.rect = self.surf.get_rect()
-        self.rect.x = x # pylint: disable=message
-        self.rect.y = y # pylint: disable=message
+        self.rect.x = x_cord # pylint: disable=message
+        self.rect.y = y_cord # pylint: disable=message

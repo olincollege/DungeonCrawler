@@ -1,19 +1,19 @@
 """
 Contains the Model class Game.
 """
-from player import Player, HealthBar
-from enemy import Enemy, EnemyProjectile
-from board import Board
-from door import Door
-from controller import Controller
-from yoshiattack import YoshiAttack
-from generate_world import WorldGeneration, Room
 import pygame
 from pygame.locals import(
     K_ESCAPE,
     KEYDOWN,
     QUIT,
 )
+from player import Player, HealthBar
+from enemy import EnemyProjectile
+from board import Board
+from door import Door
+from controller import Controller
+from yoshiattack import YoshiAttack
+from generate_world import WorldGeneration, Room
 
 class Game():
     """
@@ -21,7 +21,7 @@ class Game():
 
     attrs:
         board: Instance of the board class
-        ADDENEMY: pygame event to show when to add a projectile
+        ADD_ENEMY: pygame event to show when to add a projectile
         wgen: Instance of WorldGeneration class
         tree: Generated tree from the WorldGeneration class
         room_def: Dictionary mapping tree node names to room objects
@@ -45,9 +45,10 @@ class Game():
         """
         # Create Board
         self.board = Board(pygame)
+
         # Timer for Enemy Projectile
-        self.ADDENEMY = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.ADDENEMY, 4000)
+        self.add_enemy = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.add_enemy, 4000)
 
         self.wgen = WorldGeneration()
         self.wgen.generate_world()
@@ -101,7 +102,7 @@ class Game():
                 if event.type == KEYDOWN and (event.key == K_ESCAPE or event.type == QUIT):
                         running = False
                 # Enemy Projectile
-                elif event.type == g.ADDENEMY:
+                elif event.type == g.add_enemy:
                     enemy_pro = EnemyProjectile(self.board)
                     self.projectiles.add(enemy_pro)
 
@@ -114,7 +115,6 @@ class Game():
             self.player.animate_invincibility()
             self.attack.animate()
 
-            ### Need to refactor
             # Enemy Movement
             player_pos = (self.player.rect.x, self.player.rect.y)
             if counter%10 == 0:
@@ -128,6 +128,7 @@ class Game():
                     if enemy.health == 0:
                         self.room.num_enemies-=1
                         self.enemy_list.remove(enemy)
+
             if counter%5 == 0:
                 for ghost in self.ghost_list:
                     ghost.update(player_pos, self.player.direction_check)
@@ -137,7 +138,6 @@ class Game():
 
             # Enemy Movement
             self.projectiles.update(self.player, self.health_bar)
-
 
             # Check Collision
             if self.board.pygame.sprite.collide_rect(self.player, self.door1) \
@@ -173,6 +173,5 @@ class Game():
             self.board.draw_objects(self)
 
 # Initialize
-
 g = Game(pygame)
 g.run()

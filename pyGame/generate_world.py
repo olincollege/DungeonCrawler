@@ -26,8 +26,8 @@ class WorldGeneration:
     Class to randomly generate a tree representing room hierarchy.
 
     attrs:
-        spawn: The top node of the world-generation map.
-        obj_list: List of room objects.
+        _spawn: The top node of the world-generation map.
+        _obj_list: List of room objects.
     """
     RAND_LEVEL = {
         1: [3],
@@ -37,25 +37,26 @@ class WorldGeneration:
         5: [2,1,0,0,0],
         6: [0]
     }
-    # replace this dir with whatever we name the folder that we put backgrounds in
-    # If we have time, we sort room backgrounds based on what type of room it is, so
-    # then we'd create a dictionary where the key is the room type and value is a list
-    # of the names of background images for that type.'
-    # SAMPLE LINE: ROOM_SPRITES = os.listdir('assets/backgrounds')
-    ROOM_SPRITES = os.listdir('Stages/levels') # Placeholder
+    """
+    Replace this dir with whatever we name the folder that we put backgrounds in
+    if we have time, we sort room backgrounds based on what type of room it is, so
+    then we'd create a dictionary where the key is the room type and value is a list
+    of the names of background images for that type.
+    """
+    ROOM_SPRITES = os.listdir('Stages/levels')
 
     def __init__(self):
         """
         Initializes the tree with spawn room
         """
-        self.spawn = Node("Spawn")
-        self.obj_dict = {}
+        self._spawn = Node("Spawn")
+        self._obj_dict = {}
 
     def generate_world(self):
         """
         Runs the initial recursive call and then generates the 'boss' room.
         """
-        self.generate_rooms(self.spawn, 1)
+        self.generate_rooms(self._spawn, 1)
         self.generate_end()
 
     def generate_rooms(self,parent_room, level):
@@ -94,13 +95,13 @@ class WorldGeneration:
         spawn room (highest level). Then, chooses a random room among those on the
         highest level and makes the boss room a sub-node.
         """
-        items = [[node.name for node in children] for children in LevelOrderGroupIter(self.spawn)]
+        items = [[node.name for node in children] for children in LevelOrderGroupIter(self._spawn)]
         end_nodes = items[len(items)-1]
         node_name = random.choice(end_nodes)
-        node_ref = list(findall_by_attr(self.spawn, node_name))[0]
+        node_ref = list(findall_by_attr(self._spawn, node_name))[0]
         Node("Boss Room", parent=node_ref)
-        self.obj_dict['Boss Room'] = Room('boss_room/boss.png', 0,0)
-        DotExporter(self.spawn).to_picture('game_map.png')
+        self._obj_dict['Boss Room'] = Room('boss_room/boss.png', 0,0)
+        DotExporter(self._spawn).to_picture('game_map.png')
 
     def create_rooms(self, name, level):
         """
@@ -111,21 +112,21 @@ class WorldGeneration:
         # DEBUG LINE
         num_enemies = (random.randint(1,3)*level)//2
         num_ghosts = random.randint(1,2)*(level-2)//2
-        self.obj_dict[name] = Room(sprite, num_enemies, num_ghosts)
+        self._obj_dict[name] = Room(sprite, num_enemies, num_ghosts)
 
     @property
     def tree(self):
         """
-        Accessor for the tree
+        Accessor for the tree.
         """
-        return self.spawn
+        return self._spawn
 
     @property
     def dict(self):
         """
-        Accessor for dictionary of room objects
+        Accessor for dictionary of room objects.
         """
-        return self.obj_dict
+        return self._obj_dict
 
 t = WorldGeneration()
 t.generate_world()

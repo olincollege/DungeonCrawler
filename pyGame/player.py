@@ -36,19 +36,19 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
         self.image_count = 0
         self.movement_sprites = ["Sprites/Yoshi/1.png", "Sprites/Yoshi/2.png", "Sprites/Yoshi/3.png"
-                                ,"Sprites/Yoshi/4.png", "Sprites/Yoshi/5.png", "Sprites/Yoshi/6.png", 
-                                "Sprites/Yoshi/7.png"]
+                                ,"Sprites/Yoshi/4.png", "Sprites/Yoshi/5.png", "Sprites/Yoshi/6.png"
+                                ,"Sprites/Yoshi/7.png"]
         self.movement_check = False
         self.direction_check = False
         self.rect.x = 100
         self.rect.y = 300
-        self.health = 5
-        self.attack = False
+        self._health = 5
         self.attack_time = 0
-        self.hittable = True
         self.time_hit = 0
         self.up_check = False
         self.down_check = False
+        self.hittable = True
+        self.attack = False
 
     def animation(self):
         """
@@ -101,6 +101,8 @@ class Player(pygame.sprite.Sprite):
         """
         if not self.hittable and self.time_hit + 1200 <= pygame.time.get_ticks():
             self.hittable = True
+        else:
+            pass
 
     def animate_invincibility(self):
         """
@@ -132,7 +134,7 @@ class Player(pygame.sprite.Sprite):
                 damage = pygame.image.load('Sprites/Yoshi/damage1.png').convert()
                 damage.set_colorkey((251, 255, 252), RLEACCEL)
             else:
-                return None
+                pass
 
             # Orients Yoshi according to what direction the player is moving him
             if self.direction_check:
@@ -168,8 +170,15 @@ class Player(pygame.sprite.Sprite):
         if self.hittable:
             self.hittable = False
             self.time_hit = pygame.time.get_ticks()
-            health.surf = health.health_ani[self.health-1]
-            self.health = self.health - 1
+            health.surf = health.health_ani[self._health-1]
+            self._health = self._health - 1
+
+    @property
+    def health(self):
+        """
+        Accessor for the player health.
+        """
+        return self._health
 
 
 class HealthBar(pygame.sprite.Sprite):

@@ -1,5 +1,5 @@
 """
-
+File containing the user input class.
 """
 import pygame
 from pygame.locals import (

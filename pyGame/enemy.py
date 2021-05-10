@@ -1,9 +1,9 @@
 """
 File containing the enemy sprite class and Shy Guy and Ghost subclasses
 """
-import pygame
 import os
 import random
+import pygame
 from pygame.locals import RLEACCEL
 
 class Enemy(pygame.sprite.Sprite):
@@ -41,13 +41,13 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
         self.image_count = 0
         self.movement_check = False
-        self.health = health
         self.direction_check = False
         self.hit = False
         self.hit_time = 0
         self.rect.x = spawn[0]
         self.rect.y = spawn[1]
         self.board = board
+        self._health = health
 
     def check_collision(self, sprite, health_bar):
         """
@@ -80,6 +80,19 @@ class Enemy(pygame.sprite.Sprite):
                 self.hit_time = pygame.time.get_ticks()
                 self.health -= 1
 
+    @property
+    def health(self):
+        """
+        Accessor for the enemy health.
+        """
+        return self._health
+
+    @health.setter
+    def health(self, update_health):
+        if update_health >= 0 and isinstance(update_health, int):
+            self._health = update_health
+
+
 class ShyGuy(Enemy):
     """
     Sub-class of Enemy for the Shy Guy enemy type
@@ -104,7 +117,8 @@ class ShyGuy(Enemy):
         """
         if self.movement_check:
             self.image_count = self.image_count + 1
-            look_initial = pygame.image.load(f"Sprites/Shy_Guy/{self.movement_sprites[self.image_count]}")\
+            look_initial = pygame.image.load\
+            (f"Sprites/Shy_Guy/{self.movement_sprites[self.image_count]}")\
             .convert()
             look_initial.set_colorkey('white', RLEACCEL)
             if not self.direction_check:
@@ -148,7 +162,7 @@ class ShyGuy(Enemy):
                 damage = pygame.image.load('Sprites/Shy_Guy/damage1.png').convert()
                 damage.set_colorkey('white', RLEACCEL)
             else:
-                return None
+                pass
 
             # Orients Yoshi according to what direction the player is moving him
             if self.direction_check:

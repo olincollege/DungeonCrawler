@@ -9,8 +9,6 @@ from enemy import (
     Ghost
 )
 
-from pygame.locals import RLEACCEL
-
 class Board(pygame.sprite.Sprite):
     """
     Viewer class for the Dungeon Crawler game
@@ -31,8 +29,8 @@ class Board(pygame.sprite.Sprite):
         pygame.init()
 
         # Initialize starting room background
-        background_raw = pygame.image.load("Stages/spawn/spawn.png")
-        self.background = pygame.transform.smoothscale(background_raw, (800, 600))
+        self.background_raw = pygame.image.load("Stages/spawn/spawn.png")
+        self.background = pygame.transform.smoothscale(self.background_raw, (800, 600))
         self.screen_width = 800
         self.screen_height = 600
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
@@ -154,7 +152,7 @@ class Board(pygame.sprite.Sprite):
             spawn = (random.randint(100, 500), random.randint(200, 500))
             game.enemy_list.append(ShyGuy(spawn, self))
 
-        for i in range(0, game.room.num_ghosts):
+        for _ in range(0, game.room.num_ghosts):
             spawn = (random.randint(100, 500), random.randint(150, 550))
             game.ghost_list.append(Ghost(spawn, self))
 
