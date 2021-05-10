@@ -35,3 +35,18 @@ To exit the game, enter the command window while it is running and hit `Ctrl + C
 Find our project website at [this link](https://olincollege.github.io/DungeonCrawler/)
 
 *Note: When running pylint, do so from inside the pyGame directory*
+
+## Model View Controller Architecture
+This program follows the MVC architecture. Below is a listing of what category each file falls under
+### Model
+1. game.py
+2. generate_world.py
+### View
+1. board.py
+### Controller
+1. controller.py
+### Sprites (can be considered model)
+1. door.py
+2. player.py
+3. enemy.py
+4. yoshiattack.py
