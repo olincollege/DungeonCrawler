@@ -33,3 +33,5 @@ To exit the game, enter the command window while it is running and hit `Ctrl + C
 
 ### Project Website
 Find our project website at [this link](https://olincollege.github.io/DungeonCrawler/)
+
+*Note: When running pylint, do so from inside the pyGame directory*
