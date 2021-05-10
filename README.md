@@ -1,9 +1,9 @@
 ## Welcome to the Dungeon
 In this game, you play as Yoshi, and you've been trapped in a dungeon! The only way out is to find the treasure room, which lies all the way at the end of the dungeon. There's only one problem, your journey won't be easy! Along with navigating through the maze-like, randomly generated dungeon, you'll have to face enemies like the Shy Guy and the Ghost. And be careful, the further you go through the dungeon, the harder it gets!
 
-![image alt >](/sc1.png)
-![image alt <](/sc2.png)
-![image alt ><](/sc3.png)
+![image alt >](sc1.png)
+![image alt <](sc2.png)
+![image alt ><](sc3.png)
 
 ### Our Project
 The main feature of our Dungeon Crawler is its randomness. Every time you start a new game the map is randomly generated, and each individual room has a random number of enemies and background. Because of this, your experience will never be identical across separate playthroughs! 
